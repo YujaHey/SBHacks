@@ -10,8 +10,10 @@ model = YOLO("model/yolov8n.pt", "v8")
 frame_width = 1280
 frame_height = 720
 
-# Video source is MP4 file stored locally
-cap = cv2.VideoCapture("source/birds.mp4")
+directory = {'path': r'/Users/Mints/Documents/GitHub/SBHacks/Bird Speciees Dataset','categories': 0,'images': 0}
+for dirpath,dirnames,filenames in os.walk(directory['path']):
+    directory['categories'] += len(dirnames)
+    directory['images'] += len(filenames)
 
 # Only save an image on frame 0
 frame_count = 0
