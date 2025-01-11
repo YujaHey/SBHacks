@@ -11,8 +11,7 @@ frame_width = 1280
 frame_height = 720
 
 # Video source is MP4 file stored locally
-cap = cv2.VideoCapture()
-path = {'path': r'/Users/Mints/Documents/GitHub/SBHacks/Bird Speciees Dataset','categories':0,'images':0}
+cap = cv2.VideoCapture("source/birds.mp4")
 
 # Only save an image on frame 0
 frame_count = 0
