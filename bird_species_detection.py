@@ -121,7 +121,7 @@ def predict_image(path,model):
     print(text)
     img(path,text)
 
-path = r'/Users/Mints/Documents/GitHub/SBHacks/train_data'
+path = r'/Users/Mints/Documents/GitHub/SBHacks/Bird Speciees Dataset'
 path = r''
 list_of_paths = path_list(path)
 for file in list_of_paths:
