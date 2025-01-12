@@ -3,11 +3,10 @@ import torch.nn.functional as F
 import torch
 import torchvision.transforms as transforms
 
-import os 
+from bird_detection import path_list, img
+import cv2 as cv
 
 from PIL import Image
-import matplotlib.pyplot as plt
-
 
 def conv_block(in_channels, out_channels, activation=False, pool=False):
     layers = [nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1), 
@@ -100,13 +99,14 @@ model = to_device(ResNet34(3,450), device)
 model=(BirdResnet())
 model.load_state_dict(torch.load('model/bird-resnet34.pth',map_location=torch.device(device)))
 stats = ((0.4758, 0.4685, 0.3870), (0.2376, 0.2282, 0.2475))
-def predict_image(path, model):
-    im=Image.open(path)
+
+def predict_image(path,model):
+    image = Image.open(path)
     # resizing images then converting image to tensor, normalizing the tensors
     transform = transforms.Compose([transforms.Resize((250,250)),transforms.ToTensor(),transforms.Normalize(*stats,inplace=True)]) 
-    img=transform(im)
+    im=transform(image)
     # Convert to a batch of 1
-    xb = to_device(img.unsqueeze(0), device)
+    xb = to_device(im.unsqueeze(0), device)
     # Get predictions from model
     model.eval()
     with torch.no_grad():
@@ -116,7 +116,15 @@ def predict_image(path, model):
     yb=prob(yb)
     _, preds  = torch.max(yb, dim=1)
     # Retrieve the class label
-    print('Predicted:',bird_name_map.get(preds[0].item()),' with a probability of',str(round(torch.max(yb).item(), 4)*100)+'%')
-    plt.imshow(im)
-    plt.show()
-predict_image('Bird Speciees Dataset/AMERICAN GOLDFINCH/001.jpg', model)
+    print('------------------------------------------------------')
+    text = bird_name_map.get(preds[0].item()),' with a probability of',str(round(torch.max(yb).item(), 4)*100)+'%'
+    print(text)
+    img(path,text)
+
+path = r'/Users/Mints/Documents/GitHub/SBHacks/train_data'
+path = r''
+list_of_paths = path_list(path)
+for file in list_of_paths:
+    predict_image(file, model)
+    if cv.waitKey(300)==ord('q'):
+        break
